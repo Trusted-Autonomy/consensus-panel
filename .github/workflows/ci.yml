@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      # Default (no features): the exact build TrustedAutonomy's ta-workflow
+      # consumes -- no dependency on decision-gate.
+      - run: cargo build --all-targets
+      - run: cargo test
+      - run: cargo clippy --all-targets -- -D warnings
+      # `decision-gate` feature: builds and tests the adapter module.
+      - run: cargo build --all-targets --features decision-gate
+      - run: cargo test --features decision-gate
+      - run: cargo clippy --all-targets --features decision-gate -- -D warnings
+      - run: cargo fmt --all -- --check

@@ -1,0 +1,25 @@
+[package]
+name = "consensus-panel"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Multi-agent consensus algorithms (Raft/Paxos/weighted) for aggregating N reviewer votes into one score. Optional bridge into decision-gate's Commit/Reject/Rework/Escalate policy gate."
+repository = "https://github.com/Trusted-Autonomy/consensus-panel"
+readme = "README.md"
+keywords = ["consensus", "voting", "review", "agent", "autonomy"]
+categories = ["algorithms"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2"
+decision-gate = { git = "https://github.com/Trusted-Autonomy/decision-gate", tag = "v0.1.0", optional = true }
+
+[features]
+# Adds the decision_bridge module: ConsensusResult -> DecisionInput -> Decision,
+# bridging into the decision-gate crate's Commit/Reject/Rework/Escalate policy gate.
+decision-gate = ["dep:decision-gate"]
+
+[dev-dependencies]
+tempfile = "3"
